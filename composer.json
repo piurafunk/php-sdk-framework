@@ -1,0 +1,24 @@
+{
+  "name": "piurafunk/php-sdk-framework",
+  "description": "A framework for simple PHP SDK packages",
+  "type": "library",
+  "license": "GNU GPL",
+  "authors": [
+    {
+      "name": "James Funk",
+      "email": "piurafunk@gmail.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "php": ">=5.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "Piurafunk\\PhpSdkFramework\\": "src/"
+    }
+  },
+  "require-dev": {
+    "fzaninotto/faker": "^1.7"
+  }
+}
