@@ -51,7 +51,8 @@ class ApiClientMock implements ApiClientContract {
 				$this->extendUrl($name);
 				$subMapping = $this->subMapping;
 				$this->subMapping = self::MODEL_MAPPING;
-				return $this->generateModel($subMapping['default']);
+				$format = (isset($arguments['format']) ? $arguments['format'] : 'default');
+				return $this->generateModel($subMapping[$format]);
 			default:
 				$this->extendUrl($name);
 		}
