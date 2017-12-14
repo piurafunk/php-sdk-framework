@@ -158,7 +158,7 @@ class BaseModel {
 				// Add to new array
 				$newAttributeKeys[$property] = $propertyData;
 			} else {
-				throw new NotImplementedException('The format for this model is incorrect: ' . static::class . '; Property: ' . $property);
+				throw new NotImplementedException('The format for this model is incorrect: ' . static::class . '; Property: ' . print_r($property, true));
 			}
 		}
 		static::$attributeKeys = $newAttributeKeys;
@@ -171,26 +171,7 @@ class BaseModel {
 	 * @return bool
 	 */
 	final private static function isObject($type) {
-		if (strpos($type, '[]') !== false)
-			return false;
-		if (strpos($type, '|') !== false)
-			return false;
-
-		switch ($type) {
-			case 'int':
-			case 'integer':
-			case 'float':
-			case 'single':
-			case 'bool':
-			case 'boolean':
-			case 'double':
-			case 'string':
-			case 'array':
-			case 'callable':
-				return false;
-			default:
-				return true;
-		}
+		return class_exists($type);
 	}
 
 	/**
