@@ -152,6 +152,10 @@ class BaseModel {
 					}
 				}
 
+				// Determine nullable
+				$nullable = array_key_exists('nullable', $attributeKey) ? (bool)$attributeKey['nullable'] : false;
+				$propertyData['nullable'] = $nullable;
+
 				// Determine helper type
 				$helperType = array_key_exists('helperType', $attributeKey) ? $attributeKey['helperType'] : '';
 				$propertyData['helperType'] = $helperType;

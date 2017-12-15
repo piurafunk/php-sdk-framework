@@ -100,7 +100,8 @@ foreach ($declaredClasses as $class) {
 		$found = preg_match("/\\\$$property\b/", $originalDoc);
 		if (!$found) {
 			// If we didn't find it, let's add it to the doc block
-			$string = "$whiteSpace* @property-read ${attributeKey['returnType']} $$property";
+            $returnType = $attributeKey['returnType'] . ($attributeKey['nullable'] ? '|null' : '');
+			$string = "$whiteSpace* @property-read $returnType $$property";
 			if (!empty($attributeKey['description']))
 				$string .= " ${attributeKey['description']}";
 			$phpdoc[] = $string;

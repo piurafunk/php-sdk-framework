@@ -9,6 +9,7 @@ namespace Piurafunk\PhpSdkFramework;
  * @property-read string $address
  * @property-read string $homeIpAddress
  * @property-read integer $createdAt
+ * @property-read string|null $phoneNumber
  */
 class TestModel extends BaseModel {
 
@@ -30,6 +31,13 @@ class TestModel extends BaseModel {
 		'homeIpAddress' => [
 			'type' => 'ip',
 			'returnType' => 'string',
+			'attribute' => 'home_ip_address'
+		],
+		'phoneNumber' => [
+			'type' => 'phone',
+			'attribute' => 'phone_number',
+			'nullable' => true,
+			'returnType' => 'string'
 		]
 	];
 

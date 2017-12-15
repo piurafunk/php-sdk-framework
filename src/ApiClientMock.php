@@ -168,6 +168,8 @@ class ApiClientMock implements ApiClientContract {
 				return $this->faker->address;
 			case 'date':
 				return $this->faker->date('Y-m-d H:i:s');
+			case 'phone':
+				return $this->faker->phoneNumber;
 			case 'string':
 				return $this->faker->word;
 			case 'integer':

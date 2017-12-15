@@ -30,5 +30,9 @@ class FakerTest extends BaseTest {
 		$this->assertInternalType('string', $testModel->homeIpAddress);
 		$this->assertIpv4($testModel->homeIpAddress);
 		$this->assertInternalType('integer', $testModel->createdAt);
+		$this->assertThat($testModel->phoneNumber, $this->logicalOr(
+			$this->isType('string'),
+			$this->isNull()
+		));
 	}
 }
