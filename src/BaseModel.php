@@ -127,7 +127,8 @@ class BaseModel {
 				$propertyData['attribute'] = $attribute;
 
 				// Determine type
-				$returnType = $type = array_key_exists('type', $attributeKey) ? $attributeKey['type'] : 'string';
+				$type = array_key_exists('type', $attributeKey) ? $attributeKey['type'] : 'string';
+				$returnType = array_key_exists('returnType', $attributeKey) ? $attributeKey['returnType'] : $type;
 				if (static::isObject($type)) {
 					if (substr($type, 0, 1) !== '\\')
 						$returnType = '\\' . $type;

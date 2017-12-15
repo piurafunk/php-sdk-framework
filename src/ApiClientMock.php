@@ -9,6 +9,7 @@
 namespace Piurafunk\PhpSdkFramework;
 
 use Faker\Factory;
+use Tests\TestModel;
 
 /**
  * A mock class for the OnappApi
@@ -18,7 +19,11 @@ use Faker\Factory;
  */
 class ApiClientMock implements ApiClientContract {
 
-	const MODEL_MAPPING = [];
+	const MODEL_MAPPING = [
+		'get' => [
+			'default' => TestModel::class
+		]
+	];
 
 	/**
 	 * @var array|string The mappings that are available based on the URL we have entered so far
@@ -33,7 +38,7 @@ class ApiClientMock implements ApiClientContract {
 	/**
 	 * ApiClientMock constructor.
 	 */
-	public function __construct() {
+	final public function __construct() {
 		$this->faker = Factory::create();
 	}
 
@@ -43,7 +48,7 @@ class ApiClientMock implements ApiClientContract {
 	 * @return $this|BaseModel|BaseModel[]
 	 * @throws NotImplementedException
 	 */
-	public function __call($name, $arguments) {
+	final public function __call($name, $arguments) {
 		switch ($name) {
 			case 'location':
 				break;
@@ -65,7 +70,7 @@ class ApiClientMock implements ApiClientContract {
 	 * @return BaseModel|BaseModel[]
 	 * @throws NotImplementedException
 	 */
-	private function generateModel($subMapping) {
+	final private function generateModel($subMapping) {
 		$isArrayOfObjects = false;
 
 		if (substr($subMapping, -2) == '[]') {
@@ -96,7 +101,7 @@ class ApiClientMock implements ApiClientContract {
 	 * @return array
 	 * @throws NotImplementedException
 	 */
-	private function generateAttributesForClass($className) {
+	final private function generateAttributesForClass($className) {
 		$className::reformatAttributeKeys();
 		$attributesToGenerate = $className::$attributeKeys;
 
@@ -117,19 +122,10 @@ class ApiClientMock implements ApiClientContract {
 					$attributes[$key] = $this->generateArray($arrayOf);
 					break;
 				case 'callable':
-					$attributes[$key] = $this->generateCallable($returnType);
-					break;
-				case 'string':
-				case 'integer':
-				case 'int':
-				case 'boolean':
-				case 'bool':
-				case 'double':
-				case 'float':
-					$attributes[$key] = $this->generatePrimitive($type, $attributeToGenerate['helperType']);
+					$attributes[$key] = $this->generateAttributeOfType($returnType);
 					break;
 				default:
-					$attributes[$key] = $this->generateAttributesForClass($returnType);
+					$attributes[$key] = $this->generateAttributeOfType($type);
 			}
 		}
 
@@ -137,51 +133,16 @@ class ApiClientMock implements ApiClientContract {
 	}
 
 	/**
-	 * @param $returnType
-	 * @return bool|float|int|string|array
-	 * @throws NotImplementedException
-	 */
-	private function generateCallable($returnType) {
-		if (substr($returnType, -2) === '[]')
-			return $this->generateArray(substr($returnType, 0, -2));
-		switch ($returnType) {
-			case 'string':
-			case 'integer':
-			case 'int':
-			case 'boolean':
-			case 'bool':
-			case 'double':
-			case 'float':
-				return $this->generatePrimitive($returnType);
-				break;
-			default:
-				throw new NotImplementedException();
-		}
-	}
-
-	/**
 	 * @param $arrayOf
 	 * @return array
 	 * @throws NotImplementedException
 	 */
-	private function generateArray($arrayOf) {
+	final private function generateArray($arrayOf) {
 		$count = $this->faker->numberBetween(1, 50);
 
 		$array = [];
 		for ($i = 0; $i < $count; $i++) {
-			switch ($arrayOf) {
-				case 'string':
-				case 'integer':
-				case 'int':
-				case 'boolean':
-				case 'bool':
-				case 'double':
-				case 'float':
-					$array[] = $this->generatePrimitive($arrayOf);
-					break;
-				default:
-					$array[] = $this->generateAttributesForClass($arrayOf);
-			}
+			$array[] = $this->generateAttributeOfType($arrayOf);
 		}
 
 		return $array;
@@ -189,21 +150,24 @@ class ApiClientMock implements ApiClientContract {
 
 	/**
 	 * @param $type
-	 * @param string $helperType
-	 * @return bool|float|int|string
+	 * @return bool|float|int|string|array
 	 * @throws NotImplementedException
 	 */
-	private function generatePrimitive($type, $helperType = '') {
+	final private function generateAttributeOfType($type) {
 		switch ($type) {
+			case 'ip':
+			case 'ipv4':
+				return $this->faker->ipv4;
+			case 'ipv6':
+				return $this->faker->ipv6;
+			case 'firstName':
+				return $this->faker->firstName;
+			case 'lastName':
+				return $this->faker->lastName;
+			case 'address':
+				return $this->faker->address;
 			case 'string':
-				switch ($helperType) {
-					case 'ip':
-						return $this->faker->ipv4;
-					case '':
-						return $this->faker->word;
-					default:
-						throw new NotImplementedException();
-				}
+				return $this->faker->word;
 			case 'integer':
 			case 'int':
 				return $this->faker->randomnumber();
@@ -214,14 +178,14 @@ class ApiClientMock implements ApiClientContract {
 			case 'float':
 				return $this->faker->randomFloat();
 			default:
-				throw new NotImplementedException();
+				return $this->generateAttributesForClass($type);
 		}
 	}
 
 	/**
 	 * @param $name
 	 */
-	private function extendUrl($name) {
+	final private function extendUrl($name) {
 		switch ($name) {
 			default:
 				$this->subMapping = $this->subMapping[$name];

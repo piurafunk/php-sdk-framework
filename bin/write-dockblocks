@@ -1,0 +1,121 @@
+#!/usr/bin/env php
+<?php
+
+use Piurafunk\PhpSdkFramework\BaseModel;
+
+/**
+ * Created by PhpStorm.
+ * User: jfunk
+ * Date: 12/15/17
+ * Time: 10:52 AM
+ */
+
+/**
+ * Print the usage of this script
+ */
+function printUsage() {
+	print "\nUsage:\n\twrite-docblocks <PATH>\n\n";
+}
+
+/**
+ * @param $reflection
+ */
+function writeBasePhpDoc(ReflectionClass $reflection) {
+	$contents = file_get_contents($reflection->getFileName());
+
+	// If we've got them, we can replace them and write the file to disk
+	if ($contents) {
+		$contents = str_replace('class ' . $reflection->name, "/**\n *\n */\nclass " . $reflection->name, $contents);
+		file_put_contents($reflection->getFileName(), $contents);
+	}
+}
+
+if ($argc < 2) {
+	printUsage();
+	exit(0);
+}
+
+foreach (array(__DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php', __DIR__ . '/vendor/autoload.php') as $file) {
+	if (file_exists($file)) {
+		define('PHPUNIT_COMPOSER_INSTALL', $file);
+
+		break;
+	}
+}
+
+unset($file);
+
+if (!defined('PHPUNIT_COMPOSER_INSTALL')) {
+	fwrite(
+		STDERR,
+		'You need to set up the project dependencies using Composer:' . PHP_EOL . PHP_EOL .
+		'    composer install' . PHP_EOL . PHP_EOL .
+		'You can learn all about Composer on https://getcomposer.org/.' . PHP_EOL
+	);
+
+	die(1);
+}
+
+require PHPUNIT_COMPOSER_INSTALL;
+
+$path = $argv[1];
+
+$recursiveIterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
+
+// Load all the classes into memory
+foreach ($recursiveIterator as $file) {
+	if (!$file->isDir()) {
+		require_once $file->getPathname();
+	}
+}
+
+// Iterate over all loaded classes
+$declaredClasses = get_declared_classes();
+foreach ($declaredClasses as $class) {
+
+	// If this class is not a Model, continue
+	if (!is_subclass_of($class, BaseModel::class)) {
+		continue;
+	}
+
+	/** @var BaseModel $class */
+
+	// Get basic PHP Doc
+	$reflection = new ReflectionClass($class);
+	$originalDoc = $reflection->getDocComment();
+	if (empty($originalDoc)) {
+		continue;
+	}
+
+	$phpdoc = explode(PHP_EOL, $originalDoc);
+	unset($phpdoc[count($phpdoc) - 1]);
+	$lastRow = end($phpdoc);
+	$whiteSpace = substr($lastRow, 0, strpos($lastRow, '*'));
+
+	// Get the attribute keys
+	$attributeKeys = $class::getAttributeKeys();
+
+	foreach ($attributeKeys as $property => $attributeKey) {
+		// Try to find the property in the doc block
+		$found = preg_match("/\\\$$property\b/", $originalDoc);
+		if (!$found) {
+			// If we didn't find it, let's add it to the doc block
+			$string = "$whiteSpace* @property-read ${attributeKey['returnType']} $$property";
+			if (!empty($attributeKey['description']))
+				$string .= " ${attributeKey['description']}";
+			$phpdoc[] = $string;
+		}
+	}
+
+	// Append the closing line, since we removed it before
+	$phpdoc[] = "$whiteSpace*/";
+
+	// Get the current contents of the file
+	$contents = file_get_contents($reflection->getFileName());
+
+	// If we've got them, we can replace them and write the file to disk
+	if ($contents) {
+		$contents = str_replace($originalDoc, implode(PHP_EOL, $phpdoc), $contents);
+		file_put_contents($reflection->getFileName(), $contents);
+	}
+}
