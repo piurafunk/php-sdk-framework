@@ -9,7 +9,6 @@
 namespace Piurafunk\PhpSdkFramework;
 
 use Faker\Factory;
-use Tests\TestModel;
 
 /**
  * A mock class for the OnappApi

@@ -6,8 +6,7 @@
  * Time: 12:06 PM
  */
 
-namespace Tests;
-
+namespace Piurafunk\PhpSdkFramework;
 
 use PHPUnit\Framework\TestCase;
 

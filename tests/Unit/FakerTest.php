@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Unit;
+namespace Piurafunk\PhpSdkFramework\Unit;
 
 use Piurafunk\PhpSdkFramework\ApiClientContract;
 use Piurafunk\PhpSdkFramework\ApiClientMock;
-use Tests\BaseTest;
-use Tests\TestModel;
+use Piurafunk\PhpSdkFramework\BaseTest;
+use Piurafunk\PhpSdkFramework\TestModel;
 
 class FakerTest extends BaseTest {
 

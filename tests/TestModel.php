@@ -1,8 +1,6 @@
 <?php
 
-namespace Tests;
-
-use Piurafunk\PhpSdkFramework\BaseModel;
+namespace Piurafunk\PhpSdkFramework;
 
 /**
  * Class TestModel
