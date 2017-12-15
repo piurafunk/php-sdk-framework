@@ -27,7 +27,7 @@ class ApiClientMock implements ApiClientContract {
 	/**
 	 * @var array|string The mappings that are available based on the URL we have entered so far
 	 */
-	private $subMapping = self::MODEL_MAPPING;
+	private $subMapping;
 
 	/**
 	 * @var \Faker\Generator
@@ -39,6 +39,7 @@ class ApiClientMock implements ApiClientContract {
 	 */
 	final public function __construct() {
 		$this->faker = Factory::create();
+		$this->subMapping = static::MODEL_MAPPING;
 	}
 
 	/**
@@ -54,7 +55,7 @@ class ApiClientMock implements ApiClientContract {
 			case 'get':
 				$this->extendUrl($name);
 				$subMapping = $this->subMapping;
-				$this->subMapping = self::MODEL_MAPPING;
+				$this->subMapping = static::MODEL_MAPPING;
 				$format = (isset($arguments['format']) ? $arguments['format'] : 'default');
 				return $this->generateModel($subMapping[$format]);
 			default:
@@ -165,6 +166,8 @@ class ApiClientMock implements ApiClientContract {
 				return $this->faker->lastName;
 			case 'address':
 				return $this->faker->address;
+			case 'date':
+				return $this->faker->date('Y-m-d H:i:s');
 			case 'string':
 				return $this->faker->word;
 			case 'integer':

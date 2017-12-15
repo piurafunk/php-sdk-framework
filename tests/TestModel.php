@@ -8,6 +8,7 @@ namespace Piurafunk\PhpSdkFramework;
  * @property-read string $lastName
  * @property-read string $address
  * @property-read string $homeIpAddress
+ * @property-read integer $createdAt
  */
 class TestModel extends BaseModel {
 
@@ -29,7 +30,22 @@ class TestModel extends BaseModel {
 		'homeIpAddress' => [
 			'type' => 'ip',
 			'returnType' => 'string',
-			''
 		]
 	];
+
+	/**
+	 * @throws NotImplementedException
+	 */
+	public static function reformatAttributeKeys() {
+		static::$attributeKeys['createdAt'] = [
+			'type' => 'date',
+			'attribute' => 'created_at',
+			'returnType' => 'integer',
+			'callable' => function ($value) {
+				return strtotime($value);
+			}
+		];
+
+		parent::reformatAttributeKeys();
+	}
 }

@@ -132,9 +132,6 @@ class BaseModel {
 				if (static::isObject($type)) {
 					if (substr($type, 0, 1) !== '\\')
 						$returnType = '\\' . $type;
-				} elseif ($type === 'callable') {
-					$returnType = $attributeKey['returnType'];
-					$propertyData['callable'] = $attributeKey['callable'];
 				} elseif ($type === 'array') {
 					// Determine array of
 					$propertyData['arrayOf'] = $attributeKey['arrayOf'];
@@ -147,6 +144,13 @@ class BaseModel {
 
 				$propertyData['type'] = $type;
 				$propertyData['returnType'] = $returnType;
+
+				// Determine callable
+				if (array_key_exists('callable', $attributeKey)) {
+					if ($attributeKey['callable'] instanceof \Closure) {
+						$propertyData['callable'] = $attributeKey['callable'];
+					}
+				}
 
 				// Determine helper type
 				$helperType = array_key_exists('helperType', $attributeKey) ? $attributeKey['helperType'] : '';
@@ -210,9 +214,10 @@ class BaseModel {
 		$attributeKey = static::$attributeKeys[$property];
 		$value = $this->attributes[$attributeKey['attribute']];
 
-		// If the type is a function, let's call and return it
-		if ($attributeKey['type'] === 'callable')
+		// If the callable is set, let's call and return it
+		if (array_key_exists('callable', $attributeKey) && $attributeKey['callable'] instanceof \Closure) {
 			return $attributeKey['callable']($value);
+		}
 
 		switch ($attributeKey['type']) {
 			case 'int':
