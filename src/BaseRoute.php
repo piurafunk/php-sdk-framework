@@ -38,9 +38,11 @@ abstract class BaseRoute {
 	 * Set the format of the return data
 	 *
 	 * @param $format
+	 * @return static
 	 */
 	final public function format($format) {
 		$this->api->format($format);
+		return $this;
 	}
 
 	/**
