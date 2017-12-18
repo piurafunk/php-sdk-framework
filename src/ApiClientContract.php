@@ -30,8 +30,8 @@ interface ApiClientContract {
 	/**
 	 * Set the format of the return data
 	 *
-	 * @param $format
+	 * @param string $format
 	 * @return static
 	 */
-	function format($format);
+	function format($format = 'default');
 }

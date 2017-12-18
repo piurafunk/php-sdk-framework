@@ -54,10 +54,10 @@ class ApiClientMock implements ApiClientContract {
 	}
 
 	/**
-	 * @param $format
+	 * @param string $format
 	 * @return static
 	 */
-	final public function format($format) {
+	final public function format($format = 'default') {
 		$this->format = $format;
 		return $this;
 	}
