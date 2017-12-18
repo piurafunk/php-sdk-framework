@@ -187,8 +187,16 @@ class ApiClientMock implements ApiClientContract {
 		$count = $this->faker->numberBetween(1, 50);
 
 		$array = [];
-		for ($i = 0; $i < $count; $i++) {
-			$array[] = $this->generateAttributeOfType($arrayOf);
+
+		if (substr($arrayOf,-2) === '[]') {
+			for ($i = 0; $i < $count; $i++) {
+				$array[] = $this->generateArray(substr($arrayOf, 0,-2));
+			}
+		} else {
+			for ($i = 0; $i < $count; $i++) {
+				$array[] = $this->generateAttributeOfType($arrayOf);
+			}
+
 		}
 
 		return $array;
