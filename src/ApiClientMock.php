@@ -96,6 +96,7 @@ class ApiClientMock implements ApiClientContract {
 			case 'location':
 				break;
 			case 'get':
+			case 'post':
 				$this->extendUrl($name);
 				$subMapping = $this->subMapping;
 				$this->reset();
