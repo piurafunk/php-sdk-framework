@@ -255,7 +255,7 @@ class ApiClientMock implements ApiClientContract {
 	 */
 	final private function generateInteger(array $tweaks = []) {
 		$min = array_key_exists('min', $tweaks) ? $tweaks['min'] : 0;
-		$max = array_key_exists('max', $tweaks) ? $tweaks['max'] : 0;
+		$max = array_key_exists('max', $tweaks) ? $tweaks['max'] : 2147483647;
 
 		return $this->faker->numberBetween($min, $max);
 	}
