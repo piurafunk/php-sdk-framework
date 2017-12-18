@@ -26,4 +26,12 @@ interface ApiClientContract {
 	 * @return array|string
 	 */
 	function makeRequest($method = 'GET', $uri = '/', array $headers = [], array $query = [], array $body = []);
+
+	/**
+	 * Set the format of the return data
+	 *
+	 * @param $format
+	 * @return static
+	 */
+	function format($format);
 }

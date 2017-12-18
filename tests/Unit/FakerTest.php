@@ -14,16 +14,75 @@ class FakerTest extends BaseTest {
 	 */
 	private static $api;
 
+	/**
+	 * @inheritdoc
+	 */
 	public static function setUpBeforeClass() {
 		parent::setUpBeforeClass();
-		
+
 		static::$api = new ApiClientMock();
 	}
 
+	/**
+	 * @inheritdoc
+	 */
+	protected function setUp() {
+		parent::setUp();
+
+		static::$api->format('default');
+	}
+
+	/**
+	 * Test a custom defined data type
+	 */
+	public function testCustomDefinedFakerValue() {
+		TestModel::$attributeKeys['height'] = [
+			'type' => 'height',
+			'returnType' => 'string'
+		];
+
+		/** @var ApiClientMock $api */
+		$api = static::$api;
+		$api->addGenerator('height', function (\Faker\Generator $faker) {
+			$feet = $faker->numberBetween(5, 6);
+			$inches = $faker->numberBetween(0, 11);
+
+			return "$feet' $inches\"";
+		});
+
+		$testModel = $api->get();
+
+		$this->assertTestModel($testModel);
+		$this->assertInternalType('string', $testModel->height);
+		$this->assertRegExp('/\d\' \d{1,2}"/', $testModel->height);
+	}
+
+	/**
+	 * Test 'chart' as return type
+	 */
+	public function testFormatType() {
+		$response = static::$api->format('chart')->get();
+
+		$this->assertInternalType('string', $response);
+	}
+
+	/**
+	 * Test a basic model
+	 */
 	public function testGenerateTestModel() {
 		/** @var TestModel $testModel */
 		$testModel = static::$api->get();
 
+		$this->assertTestModel($testModel);
+	}
+
+	/**
+	 * Assert the attributes of a TestModel
+	 *
+	 * @param $testModel
+	 */
+	final public function assertTestModel($testModel) {
+		$this->assertInstanceOf(TestModel::class, $testModel);
 		$this->assertInternalType('string', $testModel->firstName);
 		$this->assertInternalType('string', $testModel->lastName);
 		$this->assertInternalType('string', $testModel->address);

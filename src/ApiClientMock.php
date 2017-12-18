@@ -20,9 +20,15 @@ class ApiClientMock implements ApiClientContract {
 
 	const MODEL_MAPPING = [
 		'get' => [
-			'default' => TestModel::class
+			'default' => TestModel::class,
+			'chart' => 'string'
 		]
 	];
+
+	/**
+	 * @var \Closure[] An array of functions to generate fake data
+	 */
+	protected static $customGenerators = [];
 
 	/**
 	 * @var array|string The mappings that are available based on the URL we have entered so far
@@ -35,11 +41,48 @@ class ApiClientMock implements ApiClientContract {
 	private $faker;
 
 	/**
+	 * @var string The format of the return data
+	 */
+	private $format = 'default';
+
+	/**
 	 * ApiClientMock constructor.
 	 */
 	final public function __construct() {
 		$this->faker = Factory::create();
 		$this->subMapping = static::MODEL_MAPPING;
+	}
+
+	/**
+	 * @param $format
+	 * @return static
+	 */
+	final public function format($format) {
+		$this->format = $format;
+		return $this;
+	}
+
+	/**
+	 * Add a function to the array of custom generators
+	 *
+	 * @param string $key
+	 * @param \Closure $callable
+	 * @return static
+	 */
+	final public function addGenerator($key, \Closure $callable) {
+		static::$customGenerators[$key] = $callable;
+		return $this;
+	}
+
+	/**
+	 * Remove a function from the array of custom generators
+	 *
+	 * @param string $key
+	 * @return static
+	 */
+	final public function removeGenerator($key) {
+		unset(static::$customGenerators[$key]);
+		return $this;
 	}
 
 	/**
@@ -55,9 +98,8 @@ class ApiClientMock implements ApiClientContract {
 			case 'get':
 				$this->extendUrl($name);
 				$subMapping = $this->subMapping;
-				$this->subMapping = static::MODEL_MAPPING;
-				$format = (isset($arguments['format']) ? $arguments['format'] : 'default');
-				return $this->generateModel($subMapping[$format]);
+				$this->reset();
+				return $this->generateModel($subMapping[$this->format]);
 			default:
 				$this->extendUrl($name);
 		}
@@ -86,7 +128,11 @@ class ApiClientMock implements ApiClientContract {
 
 		$objects = [];
 		for ($i = 0; $i < $numberOfObjects; $i++) {
-			$objects[] = new $className($this->generateAttributesForClass($className));
+			if (is_subclass_of($className, BaseModel::class)) {
+				$objects[] = new $className($this->generateAttributesForClass($className));
+			} else {
+				$objects[] = $this->generateAttributeOfType($className);
+			}
 		}
 
 		if ($isArrayOfObjects) {
@@ -154,6 +200,10 @@ class ApiClientMock implements ApiClientContract {
 	 * @throws NotImplementedException
 	 */
 	final private function generateAttributeOfType($type) {
+		if (array_key_exists($type, static::$customGenerators)) {
+			return (static::$customGenerators[$type])($this->faker);
+		}
+
 		switch ($type) {
 			case 'ip':
 			case 'ipv4':
@@ -207,5 +257,12 @@ class ApiClientMock implements ApiClientContract {
 	 */
 	final public function makeRequest($method = 'GET', $uri = '/', array $headers = [], array $query = [], array $body = []) {
 		return $this->__call(strtolower($method), []);
+	}
+
+	/**
+	 * Reset the faker API to a fresh configuration
+	 */
+	public function reset() {
+		$this->subMapping = static::MODEL_MAPPING;
 	}
 }

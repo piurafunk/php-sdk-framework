@@ -20,7 +20,7 @@ abstract class BaseRoute {
 	protected $api;
 
 	/**
-	 * @var string the URI to make requests to
+	 * @var string The URI to make requests to
 	 */
 	protected $uri = '';
 
@@ -32,6 +32,15 @@ abstract class BaseRoute {
 	final public function __construct(ApiClientContract &$api, $uri) {
 		$this->api = $api;
 		$this->uri .= $uri;
+	}
+
+	/**
+	 * Set the format of the return data
+	 *
+	 * @param $format
+	 */
+	final public function format($format) {
+		$this->api->format($format);
 	}
 
 	/**
