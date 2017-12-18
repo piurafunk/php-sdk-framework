@@ -117,7 +117,8 @@ class BaseModel {
 					'type' => 'string',
 					'returnType' => 'string',
 					'description' => '',
-					'helperType' => ''
+					'helperType' => '',
+					'tweaks' => []
 				];
 			} elseif (is_array($attributeKey)) {
 				$propertyData = [];
@@ -151,6 +152,10 @@ class BaseModel {
 						$propertyData['callable'] = $attributeKey['callable'];
 					}
 				}
+
+				// Gather tweaks
+				$tweaks = array_key_exists('tweaks', $attributeKey) ? $attributeKey['tweaks'] : [];
+				$propertyData['tweaks'] = $tweaks;
 
 				// Determine nullable
 				$nullable = array_key_exists('nullable', $attributeKey) ? (bool)$attributeKey['nullable'] : false;

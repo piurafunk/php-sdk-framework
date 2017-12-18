@@ -20,7 +20,7 @@ class BaseTest extends TestCase {
 		$this->assertRegExp("/(\d{1,3}\.){3}(\d{1,3})/",$actual,$message);
 		$ipArray = explode('.', $actual);
 		foreach ($ipArray as $octet) {
-			$this->assertGreaterThanOrEqual(1, $octet);
+			$this->assertGreaterThanOrEqual(0, $octet);
 			$this->assertLessThanOrEqual(255, $octet);
 		}
 	}

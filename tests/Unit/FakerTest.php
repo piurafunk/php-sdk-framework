@@ -33,6 +33,26 @@ class FakerTest extends BaseTest {
 	}
 
 	/**
+	 * Test the integer tweaks
+	 */
+	public function testIntegerTweaks() {
+		TestModel::$attributeKeys['age'] = [
+			'type' => 'integer',
+			'tweaks' => [
+				'min' => 18,
+				'max' => 64
+			]
+		];
+
+		/** @var TestModel $testModel */
+		$testModel = static::$api->get();
+
+		$this->assertTestModel($testModel);
+		$this->assertGreaterThanOrEqual(18, $testModel->age);
+		$this->assertLessThanOrEqual(64, $testModel->age);
+	}
+
+	/**
 	 * Test a custom defined data type
 	 */
 	public function testCustomDefinedFakerValue() {

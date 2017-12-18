@@ -157,6 +157,7 @@ class ApiClientMock implements ApiClientContract {
 			$key = $attributeToGenerate['attribute'];
 			$returnType = $attributeToGenerate['returnType'];
 			$arrayOf = ($type === 'array' ? $attributeToGenerate['arrayOf'] : null);
+			$tweaks = $attributeToGenerate['tweaks'];
 
 			if (strpos($type, '|') !== false) {
 				$type = explode('|', $type);
@@ -165,13 +166,13 @@ class ApiClientMock implements ApiClientContract {
 
 			switch ($type) {
 				case 'array':
-					$attributes[$key] = $this->generateArray($arrayOf);
+					$attributes[$key] = $this->generateArray($arrayOf, $tweaks);
 					break;
 				case 'callable':
-					$attributes[$key] = $this->generateAttributeOfType($returnType);
+					$attributes[$key] = $this->generateAttributeOfType($returnType, $tweaks);
 					break;
 				default:
-					$attributes[$key] = $this->generateAttributeOfType($type);
+					$attributes[$key] = $this->generateAttributeOfType($type, $tweaks);
 			}
 		}
 
@@ -180,21 +181,22 @@ class ApiClientMock implements ApiClientContract {
 
 	/**
 	 * @param $arrayOf
+	 * @param array $tweaks
 	 * @return array
 	 * @throws NotImplementedException
 	 */
-	final private function generateArray($arrayOf) {
+	final private function generateArray($arrayOf, array $tweaks = []) {
 		$count = $this->faker->numberBetween(1, 50);
 
 		$array = [];
 
 		if (substr($arrayOf,-2) === '[]') {
 			for ($i = 0; $i < $count; $i++) {
-				$array[] = $this->generateArray(substr($arrayOf, 0,-2));
+				$array[] = $this->generateArray(substr($arrayOf, 0,-2), $tweaks);
 			}
 		} else {
 			for ($i = 0; $i < $count; $i++) {
-				$array[] = $this->generateAttributeOfType($arrayOf);
+				$array[] = $this->generateAttributeOfType($arrayOf, $tweaks);
 			}
 
 		}
@@ -204,10 +206,11 @@ class ApiClientMock implements ApiClientContract {
 
 	/**
 	 * @param $type
+	 * @param array $tweaks
 	 * @return bool|float|int|string|array
 	 * @throws NotImplementedException
 	 */
-	final private function generateAttributeOfType($type) {
+	final private function generateAttributeOfType($type, array $tweaks = []) {
 		if (array_key_exists($type, static::$customGenerators)) {
 			return (static::$customGenerators[$type])($this->faker);
 		}
@@ -232,7 +235,7 @@ class ApiClientMock implements ApiClientContract {
 				return $this->faker->word;
 			case 'integer':
 			case 'int':
-				return $this->faker->randomnumber();
+				return $this->generateInteger($tweaks);
 			case 'boolean':
 			case 'bool':
 				return $this->faker->boolean;
@@ -242,6 +245,19 @@ class ApiClientMock implements ApiClientContract {
 			default:
 				return $this->generateAttributesForClass($type);
 		}
+	}
+
+	/**
+	 * Generate an integer, obeying the tweaks provided
+	 *
+	 * @param array $tweaks
+	 * @return int
+	 */
+	final private function generateInteger(array $tweaks = []) {
+		$min = array_key_exists('min', $tweaks) ? $tweaks['min'] : 0;
+		$max = array_key_exists('max', $tweaks) ? $tweaks['max'] : 0;
+
+		return $this->faker->numberBetween($min, $max);
 	}
 
 	/**
