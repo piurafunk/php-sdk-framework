@@ -97,6 +97,9 @@ class ApiClientMock implements ApiClientContract {
 				break;
 			case 'get':
 			case 'post':
+			case 'put':
+			case 'patch':
+			case 'delete':
 				$this->extendUrl($name);
 				$subMapping = $this->subMapping;
 				$this->reset();
@@ -191,9 +194,9 @@ class ApiClientMock implements ApiClientContract {
 
 		$array = [];
 
-		if (substr($arrayOf,-2) === '[]') {
+		if (substr($arrayOf, -2) === '[]') {
 			for ($i = 0; $i < $count; $i++) {
-				$array[] = $this->generateArray(substr($arrayOf, 0,-2), $tweaks);
+				$array[] = $this->generateArray(substr($arrayOf, 0, -2), $tweaks);
 			}
 		} else {
 			for ($i = 0; $i < $count; $i++) {
