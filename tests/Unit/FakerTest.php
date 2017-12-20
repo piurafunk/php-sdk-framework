@@ -63,7 +63,7 @@ class FakerTest extends BaseTest {
 
 		/** @var ApiClientMock $api */
 		$api = static::$api;
-		$api->addGenerator('height', function (\Faker\Generator $faker) {
+		$api::addGenerator('height', function (\Faker\Generator $faker) {
 			$feet = $faker->numberBetween(5, 6);
 			$inches = $faker->numberBetween(0, 11);
 

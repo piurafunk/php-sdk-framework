@@ -67,22 +67,18 @@ class ApiClientMock implements ApiClientContract {
 	 *
 	 * @param string $key
 	 * @param \Closure $callable
-	 * @return static
 	 */
-	final public function addGenerator($key, \Closure $callable) {
+	final public static function addGenerator($key, \Closure $callable) {
 		static::$customGenerators[$key] = $callable;
-		return $this;
 	}
 
 	/**
 	 * Remove a function from the array of custom generators
 	 *
 	 * @param string $key
-	 * @return static
 	 */
-	final public function removeGenerator($key) {
+	final public static function removeGenerator($key) {
 		unset(static::$customGenerators[$key]);
-		return $this;
 	}
 
 	/**
