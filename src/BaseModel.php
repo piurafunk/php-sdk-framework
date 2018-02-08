@@ -63,7 +63,7 @@ class BaseModel {
 	 * @param array $attributeKey
 	 * @return bool
 	 */
-	private static function isArrayOfObjects(array $attributeKey) {
+	protected static function isArrayOfObjects(array $attributeKey) {
 
 		$type = $attributeKey['type'];
 
@@ -184,7 +184,7 @@ class BaseModel {
 	 * @param $type
 	 * @return bool
 	 */
-	private static function isObject($type) {
+	protected static function isObject($type) {
 		return class_exists($type);
 	}
 

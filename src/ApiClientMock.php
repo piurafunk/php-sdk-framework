@@ -110,7 +110,7 @@ class ApiClientMock implements ApiClientContract {
 	 * @return BaseModel|BaseModel[]
 	 * @throws NotImplementedException
 	 */
-	private function generateModel($subMapping) {
+	protected function generateModel($subMapping) {
 		$isArrayOfObjects = false;
 
 		if (substr($subMapping, -2) == '[]') {
@@ -145,7 +145,7 @@ class ApiClientMock implements ApiClientContract {
 	 * @return array
 	 * @throws NotImplementedException
 	 */
-	private function generateAttributesForClass($className) {
+	protected function generateAttributesForClass($className) {
 		$className::reformatAttributeKeys();
 		$attributesToGenerate = $className::$attributeKeys;
 
@@ -183,7 +183,7 @@ class ApiClientMock implements ApiClientContract {
 	 * @return array
 	 * @throws NotImplementedException
 	 */
-	private function generateArray($arrayOf, array $tweaks = []) {
+	protected function generateArray($arrayOf, array $tweaks = []) {
 		$count = $this->faker->numberBetween(1, 50);
 
 		$array = [];
@@ -208,7 +208,7 @@ class ApiClientMock implements ApiClientContract {
 	 * @return bool|float|int|string|array
 	 * @throws NotImplementedException
 	 */
-	private function generateAttributeOfType($type, array $tweaks = []) {
+	protected function generateAttributeOfType($type, array $tweaks = []) {
 		if (array_key_exists($type, static::$customGenerators)) {
 			return (static::$customGenerators[$type])($this->faker);
 		}
@@ -251,7 +251,7 @@ class ApiClientMock implements ApiClientContract {
 	 * @param array $tweaks
 	 * @return int
 	 */
-	private function generateInteger(array $tweaks = []) {
+	protected function generateInteger(array $tweaks = []) {
 		$min = array_key_exists('min', $tweaks) ? $tweaks['min'] : 0;
 		$max = array_key_exists('max', $tweaks) ? $tweaks['max'] : 2147483647;
 
@@ -261,7 +261,7 @@ class ApiClientMock implements ApiClientContract {
 	/**
 	 * @param $name
 	 */
-	private function extendUrl($name) {
+	protected function extendUrl($name) {
 		switch ($name) {
 			default:
 				$this->subMapping = $this->subMapping[$name];
