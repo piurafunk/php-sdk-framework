@@ -194,7 +194,7 @@ class BaseModel {
 	 * @param $key
 	 * @return bool
 	 */
-	final protected function has($key) {
+	protected function has($key) {
 		return array_key_exists($key, $this->attributes);
 	}
 
@@ -204,7 +204,7 @@ class BaseModel {
 	 * @param $property
 	 * @return bool|float|int|mixed|null
 	 */
-	final public function __get($property) {
+	public function __get($property) {
 
 		// If it is a custom property, return that first and foremost
 		if (array_key_exists($property, $this->customAttributes))
@@ -251,7 +251,7 @@ class BaseModel {
 	 * @param $name
 	 * @param $value
 	 */
-	final public function __set($name, $value) {
+	public function __set($name, $value) {
 		$this->customAttributes[$name] = $value;
 	}
 
@@ -260,7 +260,7 @@ class BaseModel {
 	 *
 	 * @return array
 	 */
-	final public function toArray() {
+	public function toArray() {
 		$returnArray = [];
 		foreach (static::$attributeKeys as $propertyName => $attributeKey) {
 

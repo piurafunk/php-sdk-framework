@@ -101,7 +101,7 @@ class FakerTest extends BaseTest {
 	 *
 	 * @param $testModel
 	 */
-	final public function assertTestModel($testModel) {
+	public function assertTestModel($testModel) {
 		$this->assertInstanceOf(TestModel::class, $testModel);
 		$this->assertInternalType('string', $testModel->firstName);
 		$this->assertInternalType('string', $testModel->lastName);

@@ -48,7 +48,7 @@ class ApiClientMock implements ApiClientContract {
 	/**
 	 * ApiClientMock constructor.
 	 */
-	final public function __construct() {
+	public function __construct() {
 		$this->faker = Factory::create();
 		$this->subMapping = static::MODEL_MAPPING;
 	}
@@ -57,7 +57,7 @@ class ApiClientMock implements ApiClientContract {
 	 * @param string $format
 	 * @return static
 	 */
-	final public function format($format = 'default') {
+	public function format($format = 'default') {
 		$this->format = $format;
 		return $this;
 	}
@@ -110,7 +110,7 @@ class ApiClientMock implements ApiClientContract {
 	 * @return BaseModel|BaseModel[]
 	 * @throws NotImplementedException
 	 */
-	final private function generateModel($subMapping) {
+	private function generateModel($subMapping) {
 		$isArrayOfObjects = false;
 
 		if (substr($subMapping, -2) == '[]') {
@@ -145,7 +145,7 @@ class ApiClientMock implements ApiClientContract {
 	 * @return array
 	 * @throws NotImplementedException
 	 */
-	final private function generateAttributesForClass($className) {
+	private function generateAttributesForClass($className) {
 		$className::reformatAttributeKeys();
 		$attributesToGenerate = $className::$attributeKeys;
 
@@ -183,7 +183,7 @@ class ApiClientMock implements ApiClientContract {
 	 * @return array
 	 * @throws NotImplementedException
 	 */
-	final private function generateArray($arrayOf, array $tweaks = []) {
+	private function generateArray($arrayOf, array $tweaks = []) {
 		$count = $this->faker->numberBetween(1, 50);
 
 		$array = [];
@@ -208,7 +208,7 @@ class ApiClientMock implements ApiClientContract {
 	 * @return bool|float|int|string|array
 	 * @throws NotImplementedException
 	 */
-	final private function generateAttributeOfType($type, array $tweaks = []) {
+	private function generateAttributeOfType($type, array $tweaks = []) {
 		if (array_key_exists($type, static::$customGenerators)) {
 			return (static::$customGenerators[$type])($this->faker);
 		}
@@ -251,7 +251,7 @@ class ApiClientMock implements ApiClientContract {
 	 * @param array $tweaks
 	 * @return int
 	 */
-	final private function generateInteger(array $tweaks = []) {
+	private function generateInteger(array $tweaks = []) {
 		$min = array_key_exists('min', $tweaks) ? $tweaks['min'] : 0;
 		$max = array_key_exists('max', $tweaks) ? $tweaks['max'] : 2147483647;
 
@@ -261,7 +261,7 @@ class ApiClientMock implements ApiClientContract {
 	/**
 	 * @param $name
 	 */
-	final private function extendUrl($name) {
+	private function extendUrl($name) {
 		switch ($name) {
 			default:
 				$this->subMapping = $this->subMapping[$name];
@@ -277,7 +277,7 @@ class ApiClientMock implements ApiClientContract {
 	 * @return array|ApiClientMock|BaseModel|BaseModel[]|string
 	 * @throws NotImplementedException
 	 */
-	final public function makeRequest($method = 'GET', $uri = '/', array $headers = [], array $query = [], array $body = []) {
+	public function makeRequest($method = 'GET', $uri = '/', array $headers = [], array $query = [], array $body = []) {
 		return $this->__call(strtolower($method), []);
 	}
 

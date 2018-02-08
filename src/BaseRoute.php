@@ -29,7 +29,7 @@ abstract class BaseRoute {
 	 * @param ApiClientContract $api
 	 * @param $uri
 	 */
-	final public function __construct(ApiClientContract &$api, $uri) {
+	public function __construct(ApiClientContract &$api, $uri) {
 		$this->api = $api;
 		$this->uri .= $uri;
 	}
@@ -40,7 +40,7 @@ abstract class BaseRoute {
 	 * @param $format
 	 * @return static
 	 */
-	final public function format($format) {
+	public function format($format) {
 		$this->api->format($format);
 		return $this;
 	}
