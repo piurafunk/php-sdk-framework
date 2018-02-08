@@ -87,10 +87,8 @@ class ApiClientMock implements ApiClientContract {
 	 * @return $this|BaseModel|BaseModel[]
 	 * @throws NotImplementedException
 	 */
-	final public function __call($name, $arguments) {
+	public function __call($name, $arguments) {
 		switch ($name) {
-			case 'location':
-				break;
 			case 'get':
 			case 'post':
 			case 'put':
