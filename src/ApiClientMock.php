@@ -33,17 +33,17 @@ class ApiClientMock implements ApiClientContract {
 	/**
 	 * @var array|string The mappings that are available based on the URL we have entered so far
 	 */
-	private $subMapping;
+	protected $subMapping;
 
 	/**
 	 * @var \Faker\Generator
 	 */
-	private $faker;
+	protected $faker;
 
 	/**
 	 * @var string The format of the return data
 	 */
-	private $format = 'default';
+	protected $format = 'default';
 
 	/**
 	 * ApiClientMock constructor.
@@ -68,7 +68,7 @@ class ApiClientMock implements ApiClientContract {
 	 * @param string $key
 	 * @param \Closure $callable
 	 */
-	final public static function addGenerator($key, \Closure $callable) {
+	public static function addGenerator($key, \Closure $callable) {
 		static::$customGenerators[$key] = $callable;
 	}
 
@@ -77,7 +77,7 @@ class ApiClientMock implements ApiClientContract {
 	 *
 	 * @param string $key
 	 */
-	final public static function removeGenerator($key) {
+	public static function removeGenerator($key) {
 		unset(static::$customGenerators[$key]);
 	}
 

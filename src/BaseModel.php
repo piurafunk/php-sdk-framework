@@ -63,7 +63,7 @@ class BaseModel {
 	 * @param array $attributeKey
 	 * @return bool
 	 */
-	final private static function isArrayOfObjects(array $attributeKey) {
+	private static function isArrayOfObjects(array $attributeKey) {
 
 		$type = $attributeKey['type'];
 
@@ -82,7 +82,7 @@ class BaseModel {
 	 * @return array
 	 * @throws NotImplementedException
 	 */
-	final public static function generateDocBlock() {
+	public static function generateDocBlock() {
 		static::reformatAttributeKeys();
 		$return = [];
 		foreach (static::$attributeKeys as $property => $attributeKey) {
@@ -99,7 +99,7 @@ class BaseModel {
 	 * @return array
 	 * @throws NotImplementedException
 	 */
-	final public static function getAttributeKeys() {
+	public static function getAttributeKeys() {
 		static::reformatAttributeKeys();
 		return static::$attributeKeys;
 	}
@@ -184,7 +184,7 @@ class BaseModel {
 	 * @param $type
 	 * @return bool
 	 */
-	final private static function isObject($type) {
+	private static function isObject($type) {
 		return class_exists($type);
 	}
 
