@@ -24,7 +24,7 @@ class BaseModel {
 	 */
 	protected $customAttributes = [];
 
-	/**`
+	/**
 	 * @var array
 	 */
 	public static $attributeKeys = [];

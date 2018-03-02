@@ -11,7 +11,7 @@ namespace Piurafunk\PhpSdkFramework;
 use Faker\Factory;
 
 /**
- * A mock class for the OnappApi
+ * A mock class for the API
  *
  * Class OnappApiMock
  * @package App\Services
