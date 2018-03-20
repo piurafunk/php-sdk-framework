@@ -210,7 +210,7 @@ class ApiClientMock implements ApiClientContract {
 	 */
 	protected function generateAttributeOfType($type, array $tweaks = []) {
 		if (array_key_exists($type, static::$customGenerators)) {
-			return (static::$customGenerators[$type])($this->faker);
+			return (static::$customGenerators[$type])($this->faker, $tweaks);
 		}
 
 		switch ($type) {
@@ -240,6 +240,8 @@ class ApiClientMock implements ApiClientContract {
 			case 'double':
 			case 'float':
 				return $this->faker->randomFloat();
+            case 'oneOf':
+                return $this->faker->randomElement($tweaks);
 			default:
 				return $this->generateAttributesForClass($type);
 		}
