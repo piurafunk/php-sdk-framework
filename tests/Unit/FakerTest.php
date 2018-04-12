@@ -44,7 +44,6 @@ class FakerTest extends BaseTest {
 			]
 		];
 
-		/** @var TestModel $testModel */
 		$testModel = static::$api->get();
 
 		$this->assertTestModel($testModel);
@@ -94,24 +93,5 @@ class FakerTest extends BaseTest {
 		$testModel = static::$api->get();
 
 		$this->assertTestModel($testModel);
-	}
-
-	/**
-	 * Assert the attributes of a TestModel
-	 *
-	 * @param $testModel
-	 */
-	public function assertTestModel($testModel) {
-		$this->assertInstanceOf(TestModel::class, $testModel);
-		$this->assertInternalType('string', $testModel->firstName);
-		$this->assertInternalType('string', $testModel->lastName);
-		$this->assertInternalType('string', $testModel->address);
-		$this->assertInternalType('string', $testModel->homeIpAddress);
-		$this->assertIpv4($testModel->homeIpAddress);
-		$this->assertInternalType('integer', $testModel->createdAt);
-		$this->assertThat($testModel->phoneNumber, $this->logicalOr(
-			$this->isType('string'),
-			$this->isNull()
-		));
 	}
 }

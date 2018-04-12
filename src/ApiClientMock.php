@@ -9,12 +9,18 @@
 namespace Piurafunk\PhpSdkFramework;
 
 use Faker\Factory;
+use Illuminate\Contracts\Cache\Store;
 
 /**
  * A mock class for the API
  *
  * Class OnappApiMock
  * @package App\Services
+ * @method BaseModel|BaseModel[] get()
+ * @method BaseModel|BaseModel[] post()
+ * @method BaseModel|BaseModel[] put()
+ * @method BaseModel|BaseModel[] patch()
+ * @method BaseModel|BaseModel[] delete()
  */
 class ApiClientMock implements ApiClientContract {
 
@@ -24,6 +30,21 @@ class ApiClientMock implements ApiClientContract {
 			'chart' => 'string'
 		]
 	];
+
+    /**
+     * @var Store The cache for retrieved resources
+     */
+	protected $store;
+
+    /**
+     * @var String The prefix to use in the store key
+     */
+	protected $storePrefix = 'api-mock-';
+
+    /**
+     * @var string The path taken to retrieve this resource. This is used to determine if a result is already cached
+     */
+	protected $path = '';
 
 	/**
 	 * @var \Closure[] An array of functions to generate fake data
@@ -45,12 +66,14 @@ class ApiClientMock implements ApiClientContract {
 	 */
 	protected $format = 'default';
 
-	/**
-	 * ApiClientMock constructor.
-	 */
-	public function __construct() {
+    /**
+     * ApiClientMock constructor.
+     * @param Store|null $store
+     */
+	public function __construct(Store $store = null) {
 		$this->faker = Factory::create();
 		$this->subMapping = static::MODEL_MAPPING;
+		$this->store = $store;
 	}
 
 	/**
@@ -90,6 +113,10 @@ class ApiClientMock implements ApiClientContract {
 	public function __call($name, $arguments) {
 		switch ($name) {
 			case 'get':
+                $this->extendUrl($name);
+                $subMapping = $this->subMapping;
+                $this->reset();
+                return $this->retrieve($subMapping[$this->format]);
 			case 'post':
 			case 'put':
 			case 'patch':
@@ -104,6 +131,34 @@ class ApiClientMock implements ApiClientContract {
 
 		return $this;
 	}
+
+    /**
+     * Retrieve a cached result, or generate a new one to store in the cache and return
+     *
+     * @param $subMapping
+     *
+     * @return BaseModel|BaseModel[]
+     */
+	protected function retrieve($subMapping) {
+	    // If the store is not configured, simply generate and return a model
+	    if (is_null($this->store)) {
+            return $this->generateModel($subMapping);
+        }
+
+	    // Check if we have it in the cache already
+        if ($model = $this->store->get($this->storePrefix . $this->path)) {
+            return $model;
+        }
+
+        // Generate a new model
+        $model = $this->generateModel($subMapping);
+
+        // Store it in the cache
+        $this->store->put($this->storePrefix . $this->path,$model,0);
+
+        // Return the model
+        return $model;
+    }
 
 	/**
 	 * @param $subMapping
@@ -264,6 +319,7 @@ class ApiClientMock implements ApiClientContract {
 	 * @param $name
 	 */
 	protected function extendUrl($name) {
+	    $this->path .= "/$name";
 		switch ($name) {
 			default:
 				$this->subMapping = $this->subMapping[$name];
@@ -287,6 +343,7 @@ class ApiClientMock implements ApiClientContract {
 	 * Reset the faker API to a fresh configuration
 	 */
 	public function reset() {
+	    $this->path = '';
 		$this->subMapping = static::MODEL_MAPPING;
 	}
 }

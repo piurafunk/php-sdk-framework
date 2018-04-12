@@ -24,4 +24,23 @@ class BaseTest extends TestCase {
 			$this->assertLessThanOrEqual(255, $octet);
 		}
 	}
+
+    /**
+     * Assert the attributes of a TestModel
+     *
+     * @param $testModel
+     */
+    public function assertTestModel($testModel) {
+        $this->assertInstanceOf(TestModel::class, $testModel);
+        $this->assertInternalType('string', $testModel->firstName);
+        $this->assertInternalType('string', $testModel->lastName);
+        $this->assertInternalType('string', $testModel->address);
+        $this->assertInternalType('string', $testModel->homeIpAddress);
+        $this->assertIpv4($testModel->homeIpAddress);
+        $this->assertInternalType('integer', $testModel->createdAt);
+        $this->assertThat($testModel->phoneNumber, $this->logicalOr(
+            $this->isType('string'),
+            $this->isNull()
+        ));
+    }
 }
