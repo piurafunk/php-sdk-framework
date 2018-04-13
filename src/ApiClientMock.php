@@ -133,7 +133,7 @@ class ApiClientMock implements ApiClientContract {
 	public function __call($name, $arguments) {
 		switch ($name) {
 			case 'get':
-				$this->extendUrl($name);
+				$this->extendUrl($name, false);
 				$subMapping = $this->subMapping;
 				$model = $this->retrieve($subMapping[$this->format]);
 				$this->reset();
@@ -142,7 +142,7 @@ class ApiClientMock implements ApiClientContract {
 			case 'put':
 			case 'patch':
 			case 'delete':
-				$this->extendUrl($name);
+				$this->extendUrl($name, false);
 				$subMapping = $this->subMapping;
 				$model = $this->generateModel($subMapping[$this->format]);
 				$this->reset();
@@ -340,10 +340,14 @@ class ApiClientMock implements ApiClientContract {
 	}
 
 	/**
-	 * @param $name
+	 * @param      $name
+	 * @param bool $extendPath
 	 */
-	protected function extendUrl($name) {
-		$this->path .= "/$name";
+	protected function extendUrl($name, $extendPath = true) {
+		if ($extendPath) {
+			$this->path .= "/$name";
+		}
+
 		switch ($name) {
 			default:
 				$this->subMapping = $this->subMapping[$name];
