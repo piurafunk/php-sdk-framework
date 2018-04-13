@@ -213,7 +213,7 @@ class ApiClientMock implements ApiClientContract {
 		$returnObject = $isArrayOfObjects ? $objects : $objects[0];
 
 		if (!is_null($this->store)) {
-			$this->store->put($this->storePrefix . $this->path, $returnObject, 0);
+			$this->store->forget($this->storePrefix . $this->path);
 		}
 
 		return $returnObject;
